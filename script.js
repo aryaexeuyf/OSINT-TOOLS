@@ -1,27 +1,35 @@
 // === SESSION & COUNTDOWN ===
 function initSession() {
-  const name = document.getElementById('user-name').value;
-  const phone = document.getElementById('user-phone').value;
-  const pin = document.getElementById('user-pin').value;
+  const name = document.getElementById('user-name')?.value?.trim();
+  const key = document.getElementById('user-key')?.value?.trim();
 
-  if (!name || !phone || pin !== 'RC-RX25') {
-    alert('Pastikan data lengkap dan PIN benar: RC-RX25');
+  if (!name || !key) {
+    alert('⚠️ Nama dan key aktivasi wajib diisi.');
+    return;
+  }
+
+  // Ganti dengan key yang valid — sekarang hardcode RC-RX25
+  if (key !== 'RC-RX25') {
+    alert('⚠️ Key aktivasi salah. Hubungi owner untuk mendapatkan key yang valid.');
     return;
   }
 
   const now = new Date().getTime();
-  localStorage.setItem('apreconix_user', JSON.stringify({ name, phone, activatedAt: now }));
-  document.getElementById('splash').classList.remove('active');
-  document.getElementById('main-ui').classList.remove('hidden');
+  localStorage.setItem('apreconix_user', JSON.stringify({ name, activatedAt: now }));
+
+  // Sembunyikan splash, tampilkan UI
+  document.getElementById('splash').classList.add('hidden');
+  document.getElementById('main-ui').classList.add('visible');
+
   startCountdown();
 }
 
 function startCountdown() {
   const data = JSON.parse(localStorage.getItem('apreconix_user'));
-  if (!data) return;
+  if (!data || !data.activatedAt) return;
 
   const activated = data.activatedAt;
-  const expiry = activated + (5 * 24 * 60 * 60 * 1000); // 5 days
+  const expiry = activated + (5 * 24 * 60 * 60 * 1000);
   const countdownEl = document.getElementById('countdown');
 
   const update = () => {
@@ -29,7 +37,11 @@ function startCountdown() {
     const diff = expiry - now;
 
     if (diff <= 0) {
-      document.body.innerHTML = '<div style="text-align:center; padding:50px; color:#f00; font-family:Orbitron; font-size:2rem;">WAKTU LANGGANAN HABIS<br><br>' + new Date().toLocaleString('id-ID') + '</div>';
+      document.body.innerHTML = `
+        <div style="text-align:center; padding:50px; color:#f00; font-family:'Orbitron'; font-size:1.8rem; background:#000;">
+          WAKTU LANGGANAN HABIS<br><br>
+          ${new Date().toLocaleString('id-ID')}
+        </div>`;
       return;
     }
 
@@ -38,22 +50,32 @@ function startCountdown() {
     const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
 
     countdownEl.textContent = `⏳ Sisa: ${days}d ${hours}j ${mins}m`;
-    setTimeout(update, 60000); // update per menit
+    setTimeout(update, 60000);
   };
   update();
 }
 
-// Check if already logged in
-window.onload = () => {
+// === LOAD CHECK ===
+window.addEventListener('load', () => {
   const user = localStorage.getItem('apreconix_user');
   if (user) {
-    document.getElementById('splash').classList.remove('active');
-    document.getElementById('main-ui').classList.remove('hidden');
-    startCountdown();
+    try {
+      const data = JSON.parse(user);
+      if (data && typeof data.activatedAt === 'number') {
+        document.getElementById('splash').classList.add('hidden');
+        document.getElementById('main-ui').classList.add('visible');
+        startCountdown();
+        return;
+      }
+    } catch (e) {
+      console.warn('Session corrupt, clearing...');
+      localStorage.removeItem('apreconix_user');
+    }
   }
-};
+  // Jika tidak valid, biarkan splash tetap tampil
+});
 
-// === TAB NAVIGATION ===
+// === TABS ===
 document.querySelectorAll('.tab').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
@@ -63,67 +85,67 @@ document.querySelectorAll('.tab').forEach(btn => {
   });
 });
 
-// === MENU TOGGLE ===
+// === MENU ===
 function toggleMenu() {
   document.getElementById('side-menu').classList.toggle('active');
 }
 
 function showSubMenu(type) {
   toggleMenu();
-  const content = document.getElementById('submenu-content');
-  content.style.display = 'block';
+  const el = document.getElementById('submenu-content');
+  el.style.display = 'block';
 
   if (type === 'log') {
-    content.innerHTML = `
+    const logs = JSON.parse(localStorage.getItem('apreconix_logs') || '[]');
+    const logText = logs.length ? logs.join('\n') : '[Belum ada aktivitas]';
+    el.innerHTML = `
       <h2>📁 LOG AKTIVITAS</h2>
-      <p><i>Menampilkan riwayat perintah OSINT & Spam dari user ini.</i></p>
       <hr>
-      <pre id="log-display">[Belum ada aktivitas]</pre>
-      <button onclick="this.parentElement.style.display='none'">TUTUP</button>
+      <pre style="color:#0f0; background:#000; padding:15px; border-radius:8px; overflow:auto;">${logText}</pre>
+      <button onclick="this.parentElement.style.display='none'" style="margin-top:15px; background:#0f0; color:#000; border:none; padding:8px 15px; border-radius:6px;">TUTUP</button>
     `;
-    // Nanti bisa diisi dari localStorage atau Firebase
   } else if (type === 'cs') {
-    content.innerHTML = `<h2>🛠️ CUSTOMER SUPPORT</h2><p>Sedang dalam pengembangan.</p><button onclick="this.parentElement.style.display='none'">KEMBALI</button>`;
-  } else if (type === 'ai') {
-    content.innerHTML = `<h2>🧠 AI MODULE</h2><p>Fitur AI sedang dalam pengembangan.</p><button onclick="this.parentElement.style.display='none'">KEMBALI</button>`;
+    el.innerHTML = `<h2>🛠️ CUSTOMER SUPPORT</h2><p>Sedang dalam pengembangan.</p><button onclick="this.parentElement.style.display='none'">KEMBALI</button>`;
+  } else {
+    el.innerHTML = `<h2>🧠 AI MODULE</h2><p>Fitur AI sedang dalam pengembangan.</p><button onclick="this.parentElement.style.display='none'">KEMBALI</button>`;
   }
 }
 
-// === MOCK SUBMIT FUNCTIONS ===
+// === MOCK SUBMIT ===
 function submitOsint() {
-  const phone = document.getElementById('osint-phone').value;
-  const name = document.getElementById('osint-name').value;
-  const nik = document.getElementById('osint-nik').value;
-  if (!phone || !name) { alert('Isi minimal nomor & nama'); return; }
+  const phone = document.getElementById('osint-phone').value.trim();
+  const name = document.getElementById('osint-name').value.trim();
+  const nik = document.getElementById('osint-nik').value.trim();
 
-  const log = `[OSINT] Target: ${name} | ${phone} | ${nik || 'NIK tidak diisi'} | ${new Date().toLocaleString()}`;
+  if (!phone || !name) { alert('Isi minimal nomor & nama target'); return; }
+
+  const log = `[OSINT] ${name} | ${phone} | ${nik || '–'} | ${new Date().toLocaleString('id-ID')}`;
   addToConsole(log);
-  // Simpan ke log lokal (nanti ke Firebase)
   saveToLog(log);
 }
 
 function submitSpam() {
-  const num = document.getElementById('spam-number').value;
+  const num = document.getElementById('spam-number').value.trim();
   const type = document.querySelector('input[name="spam-type"]:checked')?.value;
-  if (!num || !type) { alert('Isi nomor & pilih metode'); return; }
+  if (!num || !type) { alert('Isi nomor & pilih metode spam'); return; }
 
-  const types = { sms: 'SMS', wa: 'WhatsApp', pair: 'Pairing Hack', call: 'Telepon' };
-  const log = `[SPAM] ${types[type]} ke ${num} | ${new Date().toLocaleString()}`;
+  const label = { sms: 'SMS', wa: 'WhatsApp', pair: 'Pairing Hack', call: 'Telepon' };
+  const log = `[SPAM] ${label[type]} → ${num} | ${new Date().toLocaleString('id-ID')}`;
   addToConsole(log);
   saveToLog(log);
 }
 
 function addToConsole(msg) {
-  const logBox = document.getElementById('console-log');
+  const box = document.getElementById('console-log');
   const p = document.createElement('p');
   p.className = 'log';
   p.textContent = msg;
-  logBox.appendChild(p);
-  logBox.scrollTop = logBox.scrollHeight;
+  box.appendChild(p);
+  box.scrollTop = box.scrollHeight;
 }
 
 function saveToLog(msg) {
-  let logs = JSON.parse(localStorage.getItem('apreconix_logs') || '[]');
+  const logs = JSON.parse(localStorage.getItem('apreconix_logs') || '[]');
   logs.push(msg);
   localStorage.setItem('apreconix_logs', JSON.stringify(logs));
 }
