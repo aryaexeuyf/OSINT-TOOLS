@@ -6,19 +6,17 @@
   <title>ΛP-RΞCΘNIX | Cyber_Intelligence_Framework()</title>
   <link rel="stylesheet" href="style.css" />
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 </head>
 <body id="main-body">
 
   <!-- Splash Screen: First-Time Setup -->
-  <div id="splash" class="overlay active">
+  <div id="splash" class="overlay">
     <div class="card">
       <h2>🔐 ACCESS REQUIRED</h2>
-      <p>Masukkan data untuk aktivasi sesi:</p>
+      <p>Masukkan identitas untuk aktivasi sesi:</p>
       <input type="text" id="user-name" placeholder="Nama lengkap" autocomplete="off">
-      <input type="text" id="user-phone" placeholder="Nomor (+62)">
-      <input type="password" id="user-pin" placeholder="Kode PIN (RC-RX25)">
+      <div class="hint">Dapatkan key aktivasi di owner</div>
+      <input type="password" id="user-key" placeholder="••••••••">
       <button onclick="initSession()">AKTIFKAN SESI</button>
     </div>
   </div>
@@ -73,7 +71,6 @@
       <!-- CONSOLE -->
       <section id="console" class="tab-pane">
         <div id="console-log" class="console-box">
-          <!-- Log messages appear here -->
           <p class="log">[SYS] Console ready. Awaiting remote commands...</p>
         </div>
       </section>
@@ -87,7 +84,6 @@
       <div class="menu-item" onclick="showSubMenu('ai')">🧠 AI</div>
     </div>
 
-    <!-- Submenu Content -->
     <div id="submenu-content" class="submenu-content"></div>
   </div>
 
