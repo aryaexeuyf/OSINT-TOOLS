@@ -1,90 +1,67 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ΛP-RΞCΘNIX | Cyber_Intelligence_Framework()</title>
-  <link rel="stylesheet" href="style.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ΛP-RΞCΘNIX</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-<body id="main-body">
+<body>
 
-  <!-- Splash Screen: First-Time Setup -->
-  <div id="splash" class="overlay">
-    <div class="card">
-      <h2>🔐 ACCESS REQUIRED</h2>
-      <p>Masukkan identitas untuk aktivasi sesi:</p>
-      <input type="text" id="user-name" placeholder="Nama lengkap" autocomplete="off">
+  <!-- LOGIN SCREEN -->
+  <div id="login-screen">
+    <div class="login-box">
+      <h2>🔐 ΛP-RΞCΘNIX</h2>
+      <p>Masukkan identitas untuk aktivasi</p>
+      <input type="text" id="name" placeholder="Nama lengkap">
       <div class="hint">Dapatkan key aktivasi di owner</div>
-      <input type="password" id="user-key" placeholder="••••••••">
-      <button onclick="initSession()">AKTIFKAN SESI</button>
+      <input type="password" id="key" placeholder="••••••••">
+      <button onclick="login()">AKTIFKAN SESI</button>
     </div>
   </div>
 
-  <!-- Main UI -->
-  <div id="main-ui" class="hidden">
-    
-    <!-- Header -->
-    <header>
-      <h1 id="glitch-title">ΛP-RΞCΘNIX</h1>
-      <p id="subtitle">Cyber_Intelligence_Framework()</p>
-      <div class="status-bar">
-        <span id="firebase-status">● Firebase: <span style="color:#0f0">ON</span></span>
-        <span id="countdown"></span>
-      </div>
-    </header>
-
-    <!-- Navigation Tabs -->
-    <nav class="tabs">
-      <button class="tab active" data-tab="osint">OSINT TOOLS</button>
-      <button class="tab" data-tab="spam">SPAM TARGET</button>
-      <button class="tab" data-tab="console">CONSOLE</button>
-    </nav>
-
-    <!-- Tab Content -->
-    <main class="tab-content">
-      
-      <!-- OSINT TOOLS -->
-      <section id="osint" class="tab-pane active">
-        <div class="input-group">
-          <input type="text" placeholder="+62..." id="osint-phone">
-          <input type="text" placeholder="Nama Target" id="osint-name">
-          <input type="text" placeholder="NIK Target" id="osint-nik">
-          <button onclick="submitOsint()">SCAN TARGET</button>
-        </div>
-      </section>
-
-      <!-- SPAM TARGET -->
-      <section id="spam" class="tab-pane">
-        <div class="input-group">
-          <input type="text" placeholder="+62 / 08..." id="spam-number">
-          <div class="radio-group">
-            <label><input type="radio" name="spam-type" value="sms"> Spam SMS</label>
-            <label><input type="radio" name="spam-type" value="wa"> Spam WhatsApp</label>
-            <label><input type="radio" name="spam-type" value="pair"> Pairing Hack Spam</label>
-            <label><input type="radio" name="spam-type" value="call"> Spam Telepon</label>
-          </div>
-          <button onclick="submitSpam()">EKSEKUSI</button>
-        </div>
-      </section>
-
-      <!-- CONSOLE -->
-      <section id="console" class="tab-pane">
-        <div id="console-log" class="console-box">
-          <p class="log">[SYS] Console ready. Awaiting remote commands...</p>
-        </div>
-      </section>
-    </main>
-
-    <!-- Hamburger Menu -->
-    <div class="hamburger" onclick="toggleMenu()">☰</div>
-    <div id="side-menu" class="side-menu">
-      <div class="menu-item" onclick="showSubMenu('log')">📁 LOG</div>
-      <div class="menu-item" onclick="showSubMenu('cs')">🛠️ CS</div>
-      <div class="menu-item" onclick="showSubMenu('ai')">🧠 AI</div>
+  <!-- MAIN APP (sembunyi awal) -->
+  <div id="app" style="display:none;">
+    <div class="header">
+      <h1>ΛP-RΞCΘNIX</h1>
+      <p>Cyber_Intelligence_Framework()</p>
+      <div class="status">● Firebase: <span style="color:#0f0">ON</span> | <span id="timer">⏳ Loading...</span></div>
     </div>
 
-    <div id="submenu-content" class="submenu-content"></div>
+    <div class="tabs">
+      <button class="tab active" onclick="showTab('osint')">OSINT TOOLS</button>
+      <button class="tab" onclick="showTab('spam')">SPAM TARGET</button>
+      <button class="tab" onclick="showTab('console')">CONSOLE</button>
+    </div>
+
+    <div id="osint" class="content active">
+      <input type="text" placeholder="+62..." id="phone1">
+      <input type="text" placeholder="Nama Target" id="name1">
+      <input type="text" placeholder="NIK Target" id="nik1">
+      <button onclick="runOsint()">SCAN TARGET</button>
+    </div>
+
+    <div id="spam" class="content">
+      <input type="text" placeholder="+62 / 08..." id="phone2">
+      <div class="opts">
+        <label><input type="radio" name="m" value="sms"> SMS</label>
+        <label><input type="radio" name="m" value="wa"> WhatsApp</label>
+        <label><input type="radio" name="m" value="pair"> Pairing</label>
+        <label><input type="radio" name="m" value="call"> Telepon</label>
+      </div>
+      <button onclick="runSpam()">EKSEKUSI</button>
+    </div>
+
+    <div id="console" class="content">
+      <div id="log">[SYS] Ready...</div>
+    </div>
+
+    <div class="menu-btn" onclick="toggleMenu()">☰</div>
+    <div id="menu" class="side-menu">
+      <div onclick="openLog()">📁 LOG</div>
+      <div onclick="devMsg('CS')">🛠️ CS</div>
+      <div onclick="devMsg('AI')">🧠 AI</div>
+    </div>
   </div>
 
   <script src="script.js"></script>
