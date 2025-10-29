@@ -2,50 +2,40 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Courier New', monospace;
+  color: #0f0;
 }
 
 body {
-  background: #000 url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23000"/><path d="M0,0 L100,100 M100,0 L0,100" stroke="%230f0" stroke-opacity="0.05" stroke-width="1"/></svg>');
-  color: #0f0;
-  overflow-x: hidden;
+  background: #000;
+  min-height: 100vh;
+  padding: 20px;
 }
 
-/* === SPLASH SCREEN === */
-#splash {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100vw; height: 100vh;
-  background: rgba(0,0,0,0.95);
+/* === LOGIN === */
+#login-screen {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 9999;
+  min-height: 100vh;
+  background: rgba(0,0,0,0.9);
 }
 
-#splash.hidden {
-  display: none;
-}
-
-.card {
+.login-box {
   background: #0a0a0a;
   border: 1px solid #0f0;
   padding: 30px;
+  width: 90%;
+  max-width: 350px;
   border-radius: 12px;
-  box-shadow: 0 0 20px rgba(0,255,0,0.2);
-  max-width: 90%;
-  width: 320px;
   text-align: center;
+  box-shadow: 0 0 20px rgba(0,255,0,0.2);
 }
 
-.card input {
-  width: 100%;
-  padding: 10px;
-  margin: 10px 0;
-  background: #000;
-  border: 1px solid #0a0;
-  color: #0f0;
-  border-radius: 6px;
+.login-box h2 {
+  font-family: Arial, sans-serif;
+  margin-bottom: 15px;
+  text-shadow: 0 0 10px #0f0;
 }
 
 .hint {
@@ -55,176 +45,151 @@ body {
   font-style: italic;
 }
 
-.card button {
+.login-box input {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  background: #000;
+  border: 1px solid #0a0;
+  color: #0f0;
+  border-radius: 6px;
+}
+
+.login-box button {
+  width: 100%;
+  padding: 12px;
   background: #0f0;
   color: #000;
   border: none;
-  padding: 10px 20px;
-  margin-top: 15px;
   border-radius: 6px;
   font-weight: bold;
+  margin-top: 15px;
   cursor: pointer;
-  transition: all 0.2s;
 }
 
-.card button:hover {
-  background: #0a0;
-  transform: scale(1.05);
+/* === MAIN APP === */
+.header {
+  text-align: center;
+  margin-bottom: 20px;
 }
 
-/* === MAIN UI === */
-#main-ui {
-  display: none;
-  padding: 20px;
-}
-
-#main-ui.visible {
-  display: block;
-  animation: fadeIn 0.6s;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-/* --- Sisa style tetap sama seperti sebelumnya --- */
-header { text-align: center; margin-bottom: 20px; }
-#glitch-title {
-  font-family: 'Orbitron', sans-serif;
-  font-size: 2.8rem;
+.header h1 {
+  font-size: 2.2rem;
   margin: 10px 0;
-  color: #fff;
-  text-shadow: 0 0 10px #0f0, 0 0 20px #0f0;
-  animation: glitch 3s infinite;
-  letter-spacing: 2px;
+  color: white;
+  text-shadow: 0 0 10px #0f0;
+  letter-spacing: 1px;
 }
-@keyframes glitch {
-  0% { text-shadow: 0 0 10px #0f0; }
-  94% { text-shadow: 0 0 10px #0f0; }
-  95% { text-shadow: -2px 0 #f00, 2px 0 #00f; }
-  96% { text-shadow: -2px 0 #f00, 2px 0 #00f; }
-  97% { text-shadow: 0 0 10px #0f0; }
-  100% { text-shadow: 0 0 10px #0f0; }
-}
-#subtitle { font-size: 1rem; opacity: 0.8; margin-bottom: 15px; }
-.status-bar {
-  display: flex;
-  justify-content: space-between;
+
+.status {
   font-size: 0.85rem;
+  margin-top: 8px;
   color: #0a0;
 }
+
 .tabs {
   display: flex;
   gap: 8px;
   margin-bottom: 20px;
 }
+
 .tab {
   flex: 1;
-  padding: 12px;
+  padding: 10px;
   background: #0a0a0a;
   border: 1px solid #0a0;
-  color: #0f0;
-  cursor: pointer;
   border-radius: 8px;
+  cursor: pointer;
 }
+
 .tab.active {
   background: #0f0;
   color: #000;
-  font-weight: bold;
 }
-.tab:hover:not(.active) {
-  background: #050505;
+
+.content {
+  display: none;
 }
-.tab-pane { display: none; }
-.tab-pane.active { display: block; animation: slideIn 0.4s ease; }
-@keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-.input-group {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+
+.content.active {
+  display: block;
+  animation: fade 0.3s;
 }
-.input-group input,
-.input-group button {
+
+@keyframes fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.content input,
+.content button {
+  width: 100%;
   padding: 12px;
-  border-radius: 8px;
-  border: 1px solid #0a0;
+  margin: 6px 0;
   background: #000;
+  border: 1px solid #0a0;
   color: #0f0;
+  border-radius: 6px;
 }
-.input-group button {
-  background: #0a0;
-  cursor: pointer;
-}
-.input-group button:hover {
-  background: #0f0;
-  color: #000;
-}
-.radio-group {
+
+.opts {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+  margin: 10px 0;
 }
-.radio-group label {
+
+.opts label {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   font-size: 0.9rem;
 }
-.console-box {
+
+#log {
   background: #000;
   border: 1px solid #0a0;
   border-radius: 8px;
   padding: 15px;
-  height: 200px;
+  height: 180px;
   overflow-y: auto;
   font-family: monospace;
   font-size: 0.9rem;
 }
-.log { margin: 6px 0; color: #0f0; }
 
-/* Hamburger & Side Menu */
-.hamburger {
+/* Menu */
+.menu-btn {
   position: fixed;
   top: 20px;
   right: 20px;
   font-size: 1.8rem;
   cursor: pointer;
   z-index: 100;
-  color: #0f0;
 }
+
 .side-menu {
   position: fixed;
-  top: 0; right: -250px;
-  width: 220px;
+  top: 0; right: -200px;
+  width: 180px;
   height: 100vh;
   background: rgba(10,10,10,0.95);
   border-left: 1px solid #0a0;
-  padding: 60px 20px 20px;
+  padding-top: 60px;
   transition: right 0.3s;
-  z-index: 99;
 }
-.side-menu.active { right: 0; }
-.menu-item {
-  padding: 12px 0;
-  color: #0f0;
+
+.side-menu.active {
+  right: 0;
+}
+
+.side-menu > div {
+  padding: 12px 20px;
   cursor: pointer;
   border-bottom: 1px solid #050505;
 }
-.submenu-content {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0,0,0,0.92);
-  padding: 30px;
-  color: #0f0;
-  display: none;
-  z-index: 98;
-  overflow-y: auto;
-}
 
+/* Responsive */
 @media (max-width: 600px) {
-  #glitch-title { font-size: 2rem; }
+  .header h1 { font-size: 1.8rem; }
   .tabs { flex-direction: column; }
 }
