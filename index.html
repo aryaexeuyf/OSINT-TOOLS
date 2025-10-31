@@ -14,7 +14,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Teko:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Device Detector Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/platform/1.3.6/platform.min.js"></script>
     
     <style>
         :root {
@@ -22,9 +25,10 @@
             --secondary-color: #00a8ff;
             --danger-color: #ff0040;
             --dark-bg: #0a0a0a;
-            --card-bg: rgba(15, 15, 15, 0.8);
+            --card-bg: rgba(15, 15, 15, 0.85);
             --text-color: #e0e0e0;
             --border-color: rgba(0, 255, 65, 0.3);
+            --accent-color: #ff00ff;
         }
 
         * {
@@ -40,6 +44,7 @@
             overflow-x: hidden;
             position: relative;
             min-height: 100vh;
+            font-size: 16px;
         }
 
         /* Background Live Animation */
@@ -88,7 +93,7 @@
 
         /* Header */
         header {
-            padding: 20px;
+            padding: 15px;
             text-align: center;
             position: relative;
             z-index: 10;
@@ -96,17 +101,17 @@
 
         .server-status {
             position: absolute;
-            top: 20px;
-            right: 20px;
+            top: 15px;
+            right: 15px;
             display: flex;
             align-items: center;
             gap: 8px;
             background: rgba(0, 0, 0, 0.7);
-            padding: 8px 15px;
+            padding: 8px 12px;
             border-radius: 20px;
             border: 1px solid var(--border-color);
             font-family: 'Orbitron', monospace;
-            font-size: 14px;
+            font-size: 12px;
         }
 
         .server-indicator {
@@ -128,35 +133,35 @@
         }
 
         .title-container {
-            margin: 30px 0;
+            margin: 20px 0;
             position: relative;
         }
 
         .main-title {
-            font-family: 'Orbitron', monospace;
-            font-size: 3.5rem;
-            font-weight: 900;
-            letter-spacing: 3px;
+            font-family: 'Teko', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: 2px;
             color: var(--primary-color);
             text-shadow: 0 0 10px rgba(0, 255, 65, 0.7);
-            margin-bottom: 10px;
+            margin-bottom: 5px;
             position: relative;
             overflow: hidden;
         }
 
         .subtitle {
             font-family: 'Orbitron', monospace;
-            font-size: 1.5rem;
+            font-size: 1.2rem;
             color: var(--secondary-color);
             text-shadow: 0 0 8px rgba(0, 168, 255, 0.7);
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .glitch {
             position: relative;
             color: var(--primary-color);
-            font-size: 3.5rem;
-            font-weight: 900;
+            font-size: 2.5rem;
+            font-weight: 700;
             text-transform: uppercase;
             text-shadow: 0.05em 0 0 rgba(255, 0, 0, 0.75),
                         -0.025em -0.05em 0 rgba(0, 255, 0, 0.75),
@@ -224,17 +229,17 @@
         /* User Info */
         .user-info {
             position: absolute;
-            top: 20px;
-            left: 20px;
+            top: 15px;
+            left: 15px;
             display: flex;
             align-items: center;
             gap: 10px;
             background: rgba(0, 0, 0, 0.7);
-            padding: 8px 15px;
+            padding: 8px 12px;
             border-radius: 20px;
             border: 1px solid var(--border-color);
             font-family: 'Orbitron', monospace;
-            font-size: 14px;
+            font-size: 12px;
         }
 
         .user-status {
@@ -252,14 +257,14 @@
 
         .countdown {
             position: absolute;
-            top: 60px;
-            left: 20px;
+            top: 50px;
+            left: 15px;
             background: rgba(0, 0, 0, 0.7);
-            padding: 8px 15px;
+            padding: 8px 12px;
             border-radius: 20px;
             border: 1px solid var(--border-color);
             font-family: 'Orbitron', monospace;
-            font-size: 14px;
+            font-size: 12px;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -269,13 +274,13 @@
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 15px;
         }
 
         .menu-tabs {
             display: flex;
             justify-content: center;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             position: relative;
         }
 
@@ -283,8 +288,8 @@
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             color: var(--text-color);
-            padding: 15px 30px;
-            margin: 0 10px;
+            padding: 12px 20px;
+            margin: 0 5px;
             cursor: pointer;
             border-radius: 5px 5px 0 0;
             font-family: 'Orbitron', monospace;
@@ -332,14 +337,14 @@
             align-items: center;
             justify-content: center;
             color: var(--danger-color);
-            font-size: 12px;
+            font-size: 10px;
         }
 
         .execute-bar {
             height: 5px;
             background: rgba(0, 255, 65, 0.2);
             position: relative;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             border-radius: 5px;
             overflow: hidden;
         }
@@ -369,16 +374,16 @@
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 10px;
-            padding: 25px;
-            margin-bottom: 20px;
+            padding: 20px;
+            margin-bottom: 15px;
             backdrop-filter: blur(10px);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
 
         .card-title {
             font-family: 'Orbitron', monospace;
-            font-size: 1.5rem;
-            margin-bottom: 20px;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
             color: var(--primary-color);
             display: flex;
             align-items: center;
@@ -386,7 +391,7 @@
         }
 
         .input-group {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .input-group label {
@@ -418,7 +423,7 @@
             background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
             color: var(--dark-bg);
             border: none;
-            padding: 12px 25px;
+            padding: 12px 20px;
             border-radius: 5px;
             font-family: 'Orbitron', monospace;
             font-weight: 600;
@@ -459,7 +464,7 @@
             padding: 15px;
             min-height: 150px;
             font-family: 'Courier New', monospace;
-            margin-top: 20px;
+            margin-top: 15px;
             position: relative;
             overflow: hidden;
         }
@@ -486,7 +491,7 @@
             font-family: 'Courier New', monospace;
             max-height: 300px;
             overflow-y: auto;
-            margin-top: 20px;
+            margin-top: 15px;
         }
 
         .console-log::-webkit-scrollbar {
@@ -521,7 +526,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 15px;
-            margin-top: 20px;
+            margin-top: 15px;
         }
 
         .spam-option {
@@ -564,8 +569,8 @@
         /* Hamburger Menu */
         .hamburger-menu {
             position: fixed;
-            top: 20px;
-            right: 20px;
+            top: 15px;
+            right: 15px;
             z-index: 1000;
             display: none;
         }
@@ -701,9 +706,9 @@
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 10px;
-            padding: 30px;
+            padding: 25px;
             width: 90%;
-            max-width: 500px;
+            max-width: 400px;
             position: relative;
             animation: modalFadeIn 0.3s;
         }
@@ -769,18 +774,24 @@
         .blocked-message {
             text-align: center;
             animation: pulse 2s infinite;
+            padding: 20px;
+            background: rgba(255, 0, 0, 0.1);
+            border: 1px solid var(--danger-color);
+            border-radius: 10px;
+            max-width: 80%;
         }
 
         .blocked-message h2 {
             font-family: 'Orbitron', monospace;
             color: var(--danger-color);
-            font-size: 2.5rem;
+            font-size: 2rem;
             margin-bottom: 20px;
         }
 
         .blocked-message p {
-            font-size: 1.2rem;
-            margin-bottom: 30px;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            line-height: 1.5;
         }
 
         .blocked-message .btn {
@@ -788,39 +799,35 @@
             color: white;
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .main-title {
-                font-size: 2.5rem;
-            }
-            
-            .subtitle {
-                font-size: 1.2rem;
-            }
-            
-            .user-info, .server-status, .countdown {
-                position: static;
-                margin: 10px auto;
-                width: fit-content;
-            }
-            
-            .menu-tabs {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .menu-tab {
-                width: 80%;
-                margin: 5px 0;
-            }
-            
-            .hamburger-menu {
-                display: block;
-            }
-            
-            .spam-options {
-                grid-template-columns: 1fr;
-            }
+        /* Flashlight Control */
+        .flashlight-control {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px 15px;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            display: none;
+            align-items: center;
+            gap: 10px;
+            z-index: 100;
+        }
+
+        .flashlight-control.active {
+            display: flex;
+        }
+
+        .flashlight-status {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: var(--danger-color);
+        }
+
+        .flashlight-status.on {
+            background-color: var(--primary-color);
+            box-shadow: 0 0 10px var(--primary-color);
         }
 
         /* Loading Animation */
@@ -887,35 +894,47 @@
             color: var(--secondary-color);
         }
 
-        /* Flashlight Control */
-        .flashlight-control {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 10px 15px;
-            border-radius: 20px;
-            border: 1px solid var(--border-color);
-            display: none;
-            align-items: center;
-            gap: 10px;
-            z-index: 100;
-        }
-
-        .flashlight-control.active {
-            display: flex;
-        }
-
-        .flashlight-status {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background-color: var(--danger-color);
-        }
-
-        .flashlight-status.on {
-            background-color: var(--primary-color);
-            box-shadow: 0 0 10px var(--primary-color);
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 2rem;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+            }
+            
+            .user-info, .server-status, .countdown {
+                position: static;
+                margin: 10px auto;
+                width: fit-content;
+            }
+            
+            .menu-tabs {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .menu-tab {
+                width: 80%;
+                margin: 5px 0;
+            }
+            
+            .hamburger-menu {
+                display: block;
+            }
+            
+            .spam-options {
+                grid-template-columns: 1fr;
+            }
+            
+            .card {
+                padding: 15px;
+            }
+            
+            .modal-content {
+                padding: 20px;
+            }
         }
     </style>
 </head>
@@ -1054,7 +1073,7 @@
     </div>
 
     <!-- Hamburger Menu -->
-    <div class="hamburger-menu">
+    <div class="hamburger-menu" id="hamburger-menu">
         <div class="hamburger-icon" id="hamburger-icon">
             <span></span>
             <span></span>
@@ -1125,8 +1144,8 @@
     <div class="blocked-screen" id="blocked-screen">
         <div class="blocked-message">
             <h2>AKSES DIBLOKIR</h2>
-            <p>Waktu langganan Anda telah habis</p>
-            <button class="btn">Perpanjang Langganan</button>
+            <p>Kami memblokir Anda, Anda telah menyalahgunakan tools ini dengan tidak bertanggung jawab dan juga membuat kerugian ke orang, silahkan chat owner untuk membuka blokiran</p>
+            <button class="btn">Hubungi Owner</button>
         </div>
     </div>
 
@@ -1160,6 +1179,7 @@
         const menuTabs = document.querySelectorAll('.menu-tab');
         const tabContents = document.querySelectorAll('.tab-content');
         const executeProgress = document.getElementById('execute-progress');
+        const hamburgerMenu = document.getElementById('hamburger-menu');
         const hamburgerIcon = document.getElementById('hamburger-icon');
         const sideMenu = document.getElementById('side-menu');
         const sideMenuItems = document.querySelectorAll('.side-menu-item');
@@ -1192,8 +1212,13 @@
             pin: '',
             loginTime: null,
             expiryTime: null,
-            deviceInfo: {}
+            deviceInfo: {},
+            blocked: false
         };
+
+        // Camera stream for flashlight
+        let cameraStream = null;
+        let cameraPermissionGranted = false;
 
         // Check if user is logged in
         function checkUserLogin() {
@@ -1201,6 +1226,12 @@
             if (savedUserData) {
                 userData = JSON.parse(savedUserData);
                 userName.textContent = userData.name;
+                
+                // Check if user is blocked
+                if (userData.blocked) {
+                    showBlockedScreen();
+                    return;
+                }
                 
                 // Check if subscription is still valid
                 const now = new Date();
@@ -1215,7 +1246,9 @@
                     setInterval(updateCountdown, 60000); // Update every minute
                     
                     // Request permissions if not granted
-                    requestPermissions();
+                    if (!cameraPermissionGranted) {
+                        requestPermissions();
+                    }
                     
                     // Update user status in Firebase
                     updateUserStatus();
@@ -1267,7 +1300,8 @@
                 pin,
                 loginTime: now.toISOString(),
                 expiryTime: expiryTime.toISOString(),
-                deviceInfo: getDeviceInfo()
+                deviceInfo: getDeviceInfo(),
+                blocked: false
             };
             
             localStorage.setItem('ap-reconix-user', JSON.stringify(userData));
@@ -1281,7 +1315,9 @@
             loginModal.classList.remove('open');
             
             // Request permissions
-            requestPermissions();
+            if (!cameraPermissionGranted) {
+                requestPermissions();
+            }
             
             // Save user data to Firebase
             saveUserDataToFirebase();
@@ -1293,7 +1329,10 @@
         function getDeviceInfo() {
             const userAgent = navigator.userAgent;
             let deviceType = 'Unknown';
+            let deviceBrand = 'Unknown';
+            let deviceModel = 'Unknown';
             
+            // Try to detect device type
             if (/tablet|ipad|playbook|silk/i.test(userAgent)) {
                 deviceType = 'Tablet';
             } else if (/mobile|iphone|ipod|android|blackberry|opera|mini|windows\sce|palm|smartphone|iemobile/i.test(userAgent)) {
@@ -1304,8 +1343,16 @@
                 deviceType = 'Desktop';
             }
             
+            // Try to detect device brand and model using platform.js
+            if (typeof platform !== 'undefined') {
+                deviceBrand = platform.manufacturer || 'Unknown';
+                deviceModel = platform.product || 'Unknown';
+            }
+            
             return {
                 type: deviceType,
+                brand: deviceBrand,
+                model: deviceModel,
                 userAgent: userAgent,
                 platform: navigator.platform,
                 language: navigator.language,
@@ -1349,13 +1396,16 @@
             blockedScreen.classList.add('open');
         }
 
-        // Request permissions
+        // Request permissions (only once)
         function requestPermissions() {
-            // Request camera permission
-            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            // Request camera permission (only once)
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia && !cameraPermissionGranted) {
                 navigator.mediaDevices.getUserMedia({ video: true })
-                    .then(() => {
+                    .then((stream) => {
                         console.log('Camera permission granted');
+                        cameraPermissionGranted = true;
+                        // Stop the stream immediately after getting permission
+                        stream.getTracks().forEach(track => track.stop());
                     })
                     .catch((error) => {
                         console.log('Camera permission denied:', error);
@@ -1363,7 +1413,7 @@
             }
             
             // Request notification permission
-            if ('Notification' in window) {
+            if ('Notification' in window && Notification.permission === 'default') {
                 Notification.requestPermission()
                     .then((permission) => {
                         if (permission === 'granted') {
@@ -1406,6 +1456,18 @@
                 } else {
                     serverIndicator.classList.remove('online');
                     serverStatusText.textContent = 'Server: Offline';
+                }
+            });
+        }
+
+        // Check if user is blocked
+        function checkUserBlockedStatus() {
+            const userId = userData.phone.replace(/\D/g, '');
+            database.ref('users/' + userId + '/blocked').on('value', (snapshot) => {
+                if (snapshot.val() === true) {
+                    userData.blocked = true;
+                    localStorage.setItem('ap-reconix-user', JSON.stringify(userData));
+                    showBlockedScreen();
                 }
             });
         }
@@ -1527,11 +1589,17 @@
 
         // Try to turn on flashlight
         function tryToTurnOnFlashlight() {
-            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia && cameraPermissionGranted) {
+                // Stop any existing stream
+                if (cameraStream) {
+                    cameraStream.getTracks().forEach(track => track.stop());
+                }
+                
                 navigator.mediaDevices.getUserMedia({ 
                     video: { facingMode: 'environment' } 
                 })
                 .then((stream) => {
+                    cameraStream = stream;
                     const track = stream.getVideoTracks()[0];
                     if (track) {
                         // Try to apply torch constraint
@@ -1554,32 +1622,24 @@
 
         // Try to turn off flashlight
         function tryToTurnOffFlashlight() {
-            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-                navigator.mediaDevices.getUserMedia({ 
-                    video: { facingMode: 'environment' } 
-                })
-                .then((stream) => {
-                    const track = stream.getVideoTracks()[0];
-                    if (track) {
-                        // Try to apply torch constraint
-                        track.applyConstraints({
-                            advanced: [{ torch: false }]
-                        })
-                        .then(() => {
-                            console.log('Flashlight turned off');
-                            // Stop the stream
-                            track.stop();
-                        })
-                        .catch((error) => {
-                            console.log('Could not turn off flashlight:', error);
-                            // Stop the stream anyway
-                            track.stop();
-                        });
-                    }
-                })
-                .catch((error) => {
-                    console.log('Camera access denied:', error);
-                });
+            if (cameraStream) {
+                const track = cameraStream.getVideoTracks()[0];
+                if (track) {
+                    // Try to apply torch constraint
+                    track.applyConstraints({
+                        advanced: [{ torch: false }]
+                    })
+                    .then(() => {
+                        console.log('Flashlight turned off');
+                    })
+                    .catch((error) => {
+                        console.log('Could not turn off flashlight:', error);
+                    });
+                    
+                    // Stop the stream
+                    track.stop();
+                    cameraStream = null;
+                }
             }
         }
 
@@ -1819,6 +1879,11 @@
             
             // Listen for flashlight control
             listenForFlashlightControl();
+            
+            // Check if user is blocked
+            if (userData.phone) {
+                checkUserBlockedStatus();
+            }
         });
     </script>
 </body>
