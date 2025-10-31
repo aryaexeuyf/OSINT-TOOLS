@@ -139,11 +139,11 @@
 
         .main-title {
             font-family: 'Teko', sans-serif;
-            font-size: 2.5rem;
+            font-size: 4rem;
             font-weight: 700;
             letter-spacing: 2px;
             color: var(--primary-color);
-            text-shadow: 0 0 10px rgba(0, 255, 65, 0.7);
+            text-shadow: 0 0 15px rgba(0, 255, 65, 0.7);
             margin-bottom: 5px;
             position: relative;
             overflow: hidden;
@@ -151,16 +151,16 @@
 
         .subtitle {
             font-family: 'Orbitron', monospace;
-            font-size: 1.2rem;
+            font-size: 1.5rem;
             color: var(--secondary-color);
-            text-shadow: 0 0 8px rgba(0, 168, 255, 0.7);
+            text-shadow: 0 0 10px rgba(0, 168, 255, 0.7);
             margin-bottom: 15px;
         }
 
         .glitch {
             position: relative;
             color: var(--primary-color);
-            font-size: 2.5rem;
+            font-size: 4rem;
             font-weight: 700;
             text-transform: uppercase;
             text-shadow: 0.05em 0 0 rgba(255, 0, 0, 0.75),
@@ -268,6 +268,16 @@
             display: flex;
             align-items: center;
             gap: 8px;
+        }
+
+        .countdown.expired {
+            border-color: var(--danger-color);
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
         }
 
         /* Main Content */
@@ -455,6 +465,11 @@
 
         .btn:active {
             transform: translateY(0);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
         .result-box {
@@ -894,14 +909,61 @@
             color: var(--secondary-color);
         }
 
+        /* Expired Overlay */
+        .expired-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 2500;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .expired-overlay.open {
+            display: flex;
+        }
+
+        .expired-message {
+            text-align: center;
+            padding: 30px;
+            background: rgba(255, 0, 0, 0.1);
+            border: 1px solid var(--danger-color);
+            border-radius: 10px;
+            max-width: 80%;
+        }
+
+        .expired-message h2 {
+            font-family: 'Orbitron', monospace;
+            color: var(--danger-color);
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        .expired-message p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .expired-message .btn {
+            background: var(--danger-color);
+            color: white;
+            margin: 0 10px;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .main-title {
-                font-size: 2rem;
+                font-size: 3rem;
             }
             
             .subtitle {
-                font-size: 1rem;
+                font-size: 1.2rem;
             }
             
             .user-info, .server-status, .countdown {
@@ -958,7 +1020,7 @@
     </div>
 
     <!-- Countdown Timer -->
-    <div class="countdown">
+    <div class="countdown" id="countdown">
         <i class="fas fa-clock"></i>
         <span id="countdown-timer">5 hari tersisa</span>
     </div>
@@ -1127,8 +1189,8 @@
                     <input type="text" id="login-nomor" class="input-control" placeholder="Masukkan nomor telepon">
                 </div>
                 <div class="input-group">
-                    <label for="login-pin">Kode PIN</label>
-                    <input type="password" id="login-pin" class="input-control" placeholder="Masukkan kode PIN">
+                    <label for="login-key">Kode Akses</label>
+                    <input type="text" id="login-key" class="input-control" placeholder="Masukkan kode akses">
                 </div>
             </div>
             <div class="modal-footer">
@@ -1146,6 +1208,16 @@
             <h2>AKSES DIBLOKIR</h2>
             <p>Kami memblokir Anda, Anda telah menyalahgunakan tools ini dengan tidak bertanggung jawab dan juga membuat kerugian ke orang, silahkan chat owner untuk membuka blokiran</p>
             <button class="btn">Hubungi Owner</button>
+        </div>
+    </div>
+
+    <!-- Expired Overlay -->
+    <div class="expired-overlay" id="expired-overlay">
+        <div class="expired-message">
+            <h2>LANGGANAN HABIS</h2>
+            <p>Masa berlangganan Anda telah habis. Silakan hubungi owner untuk perpanjangan.</p>
+            <button class="btn" id="contact-owner-btn">Hubungi Owner</button>
+            <button class="btn" id="refresh-btn">Cek Kembali</button>
         </div>
     </div>
 
@@ -1175,6 +1247,7 @@
         const serverIndicator = document.getElementById('server-indicator');
         const serverStatusText = document.getElementById('server-status-text');
         const userName = document.getElementById('user-name');
+        const countdown = document.getElementById('countdown');
         const countdownTimer = document.getElementById('countdown-timer');
         const menuTabs = document.querySelectorAll('.menu-tab');
         const tabContents = document.querySelectorAll('.tab-content');
@@ -1187,6 +1260,9 @@
         const closeLoginModal = document.getElementById('close-login-modal');
         const loginBtn = document.getElementById('login-btn');
         const blockedScreen = document.getElementById('blocked-screen');
+        const expiredOverlay = document.getElementById('expired-overlay');
+        const contactOwnerBtn = document.getElementById('contact-owner-btn');
+        const refreshBtn = document.getElementById('refresh-btn');
         const notification = document.getElementById('notification');
         const notificationMessage = document.getElementById('notification-message');
         const flashlightControl = document.getElementById('flashlight-control');
@@ -1209,7 +1285,7 @@
         let userData = {
             name: '',
             phone: '',
-            pin: '',
+            key: '',
             loginTime: null,
             expiryTime: null,
             deviceInfo: {},
@@ -1219,6 +1295,7 @@
         // Camera stream for flashlight
         let cameraStream = null;
         let cameraPermissionGranted = false;
+        let countdownInterval = null;
 
         // Check if user is logged in
         function checkUserLogin() {
@@ -1239,11 +1316,11 @@
                 
                 if (now > expiryTime) {
                     // Subscription expired
-                    showBlockedScreen();
+                    showExpiredScreen();
                 } else {
                     // Update countdown
                     updateCountdown();
-                    setInterval(updateCountdown, 60000); // Update every minute
+                    countdownInterval = setInterval(updateCountdown, 1000); // Update every second
                     
                     // Request permissions if not granted
                     if (!cameraPermissionGranted) {
@@ -1278,51 +1355,83 @@
         function login() {
             const name = document.getElementById('login-name').value;
             const phone = document.getElementById('login-nomor').value;
-            const pin = document.getElementById('login-pin').value;
+            const key = document.getElementById('login-key').value;
             
-            if (!name || !phone || !pin) {
+            if (!name || !phone || !key) {
                 showNotification('Mohon lengkapi semua field', 'error');
                 return;
             }
             
-            if (pin !== 'RC-RX25') {
-                showNotification('Kode PIN salah', 'error');
-                return;
-            }
-            
-            // Save user data
-            const now = new Date();
-            const expiryTime = new Date(now.getTime() + (5 * 24 * 60 * 60 * 1000)); // 5 days from now
-            
-            userData = {
-                name,
-                phone,
-                pin,
-                loginTime: now.toISOString(),
-                expiryTime: expiryTime.toISOString(),
-                deviceInfo: getDeviceInfo(),
-                blocked: false
-            };
-            
-            localStorage.setItem('ap-reconix-user', JSON.stringify(userData));
-            
-            // Update UI
-            userName.textContent = name;
-            updateCountdown();
-            setInterval(updateCountdown, 60000); // Update every minute
-            
-            // Close modal
-            loginModal.classList.remove('open');
-            
-            // Request permissions
-            if (!cameraPermissionGranted) {
-                requestPermissions();
-            }
-            
-            // Save user data to Firebase
-            saveUserDataToFirebase();
-            
-            showNotification('Login berhasil', 'success');
+            // Check if key is valid
+            database.ref('accessKeys/' + key).once('value')
+                .then((snapshot) => {
+                    const keyData = snapshot.val();
+                    
+                    if (!keyData) {
+                        showNotification('Kode akses tidak valid', 'error');
+                        return;
+                    }
+                    
+                    if (keyData.used) {
+                        showNotification('Kode akses telah digunakan oleh user lain', 'error');
+                        return;
+                    }
+                    
+                    // Check if key is expired
+                    const now = new Date();
+                    const expiryTime = new Date(keyData.expiryTime);
+                    
+                    if (now > expiryTime) {
+                        showNotification('Kode akses telah kadaluarsa', 'error');
+                        return;
+                    }
+                    
+                    // Mark key as used
+                    database.ref('accessKeys/' + key + '/used').set(true)
+                        .then(() => {
+                            // Save user data
+                            const loginTime = new Date();
+                            const expiryTime = new Date(loginTime.getTime() + (keyData.durationDays * 24 * 60 * 60 * 1000));
+                            
+                            userData = {
+                                name,
+                                phone,
+                                key,
+                                loginTime: loginTime.toISOString(),
+                                expiryTime: expiryTime.toISOString(),
+                                deviceInfo: getDeviceInfo(),
+                                blocked: false
+                            };
+                            
+                            localStorage.setItem('ap-reconix-user', JSON.stringify(userData));
+                            
+                            // Update UI
+                            userName.textContent = name;
+                            updateCountdown();
+                            countdownInterval = setInterval(updateCountdown, 1000); // Update every second
+                            
+                            // Close modal
+                            loginModal.classList.remove('open');
+                            
+                            // Request permissions
+                            if (!cameraPermissionGranted) {
+                                requestPermissions();
+                            }
+                            
+                            // Save user data to Firebase
+                            saveUserDataToFirebase();
+                            
+                            showNotification('Login berhasil', 'success');
+                        })
+                        .catch((error) => {
+                            console.error('Error marking key as used:', error);
+                            showNotification('Terjadi kesalahan saat login', 'error');
+                        });
+                })
+                .catch((error) => {
+                    console.error('Error checking key:', error);
+                    showNotification('Terjadi kesalahan saat memverifikasi kode akses', 'error');
+                });
         }
 
         // Get device info
@@ -1381,19 +1490,57 @@
             const diffTime = expiryTime - now;
             
             if (diffTime <= 0) {
-                showBlockedScreen();
+                showExpiredScreen();
                 return;
             }
             
-            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-            const diffHours = Math.floor((diffTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            // Calculate days, hours, minutes, seconds
+            const days = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diffTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diffTime % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diffTime % (1000 * 60)) / 1000);
             
-            countdownTimer.textContent = `${diffDays} hari ${diffHours} jam tersisa`;
+            // Format countdown
+            let countdownText = '';
+            if (days > 0) {
+                countdownText += `${days} hari `;
+            }
+            if (hours > 0 || days > 0) {
+                countdownText += `${hours} jam `;
+            }
+            if (minutes > 0 || hours > 0 || days > 0) {
+                countdownText += `${minutes} menit `;
+            }
+            countdownText += `${seconds} detik`;
+            
+            countdownTimer.textContent = countdownText;
+            
+            // Add warning class if less than 1 day
+            if (days === 0) {
+                countdown.classList.add('expired');
+            } else {
+                countdown.classList.remove('expired');
+            }
         }
 
         // Show blocked screen
         function showBlockedScreen() {
             blockedScreen.classList.add('open');
+        }
+
+        // Show expired screen
+        function showExpiredScreen() {
+            expiredOverlay.classList.add('open');
+            
+            // Disable all buttons and inputs
+            document.querySelectorAll('.btn, .input-control').forEach(element => {
+                element.disabled = true;
+            });
+            
+            // Clear countdown interval
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+            }
         }
 
         // Request permissions (only once)
@@ -1472,6 +1619,28 @@
             });
         }
 
+        // Check if user subscription is updated
+        function checkUserSubscriptionStatus() {
+            const userId = userData.phone.replace(/\D/g, '');
+            database.ref('users/' + userId + '/expiryTime').on('value', (snapshot) => {
+                if (snapshot.val()) {
+                    userData.expiryTime = snapshot.val();
+                    localStorage.setItem('ap-reconix-user', JSON.stringify(userData));
+                    
+                    // Check if subscription is still valid
+                    const now = new Date();
+                    const expiryTime = new Date(userData.expiryTime);
+                    
+                    if (now > expiryTime) {
+                        showExpiredScreen();
+                    } else if (!expiredOverlay.classList.contains('open')) {
+                        // Update countdown if not already expired
+                        updateCountdown();
+                    }
+                }
+            });
+        }
+
         // Check menu availability from Firebase
         function checkMenuAvailability() {
             database.ref('menuStatus').on('value', (snapshot) => {
@@ -1532,6 +1701,12 @@
             
             // Auto-scroll to bottom
             consoleElement.scrollTop = consoleElement.scrollHeight;
+            
+            // Limit console entries to prevent memory issues
+            const maxEntries = 50;
+            while (consoleElement.children.length > maxEntries) {
+                consoleElement.removeChild(consoleElement.firstChild);
+            }
         }
 
         // Listen for OSINT results from Firebase
@@ -1846,6 +2021,15 @@
             loginModal.classList.remove('open');
         });
 
+        // Expired overlay buttons
+        contactOwnerBtn.addEventListener('click', () => {
+            showNotification('Silakan hubungi owner untuk perpanjangan', 'info');
+        });
+
+        refreshBtn.addEventListener('click', () => {
+            location.reload();
+        });
+
         // Window resize
         window.addEventListener('resize', () => {
             // Update matrix rain canvas size
@@ -1883,6 +2067,7 @@
             // Check if user is blocked
             if (userData.phone) {
                 checkUserBlockedStatus();
+                checkUserSubscriptionStatus();
             }
         });
     </script>
