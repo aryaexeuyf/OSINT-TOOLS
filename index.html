@@ -845,19 +845,167 @@
             box-shadow: 0 0 10px var(--primary-color);
         }
 
-        /* Loading Animation */
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(0, 255, 65, 0.3);
-            border-radius: 50%;
-            border-top-color: var(--primary-color);
-            animation: spin 1s ease-in-out infinite;
+        /* Expired Overlay */
+        .expired-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 2500;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        .expired-overlay.open {
+            display: flex;
+        }
+
+        .expired-message {
+            text-align: center;
+            padding: 30px;
+            background: rgba(255, 0, 0, 0.1);
+            border: 1px solid var(--danger-color);
+            border-radius: 10px;
+            max-width: 80%;
+        }
+
+        .expired-message h2 {
+            font-family: 'Orbitron', monospace;
+            color: var(--danger-color);
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        .expired-message p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .expired-message .btn {
+            background: var(--danger-color);
+            color: white;
+            margin: 0 10px;
+        }
+
+        /* Info Page */
+        .info-page {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--dark-bg);
+            z-index: 3000;
+            overflow-y: auto;
+        }
+
+        .info-page.open {
+            display: block;
+        }
+
+        .info-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .info-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px 0;
+        }
+
+        .info-header h1 {
+            font-family: 'Teko', sans-serif;
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .info-header p {
+            font-family: 'Orbitron', monospace;
+            color: var(--secondary-color);
+            font-size: 1.2rem;
+        }
+
+        .info-section {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .info-section h2 {
+            font-family: 'Orbitron', monospace;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-section p, .info-section li {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .info-section ul {
+            padding-left: 20px;
+        }
+
+        .info-actions {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .back-btn {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: var(--dark-bg);
+            border: none;
+            padding: 15px 30px;
+            border-radius: 5px;
+            font-family: 'Orbitron', monospace;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 65, 0.4);
+        }
+
+        .chat-btn {
+            background: linear-gradient(45deg, #25D366, #128C7E);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 5px;
+            font-family: 'Orbitron', monospace;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chat-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(37, 211, 102, 0.4);
         }
 
         /* Notification */
@@ -909,51 +1057,44 @@
             color: var(--secondary-color);
         }
 
-        /* Expired Overlay */
-        .expired-overlay {
+        /* Guest Mode Overlay */
+        .guest-overlay {
             display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 2500;
-            flex-direction: column;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1500;
             align-items: center;
             justify-content: center;
         }
 
-        .expired-overlay.open {
+        .guest-overlay.open {
             display: flex;
         }
 
-        .expired-message {
+        .guest-message {
             text-align: center;
             padding: 30px;
-            background: rgba(255, 0, 0, 0.1);
-            border: 1px solid var(--danger-color);
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
             border-radius: 10px;
             max-width: 80%;
         }
 
-        .expired-message h2 {
+        .guest-message h2 {
             font-family: 'Orbitron', monospace;
-            color: var(--danger-color);
-            font-size: 2.5rem;
+            color: var(--primary-color);
+            font-size: 2rem;
             margin-bottom: 20px;
         }
 
-        .expired-message p {
+        .guest-message p {
             font-size: 1.2rem;
             margin-bottom: 30px;
             line-height: 1.5;
-        }
-
-        .expired-message .btn {
-            background: var(--danger-color);
-            color: white;
-            margin: 0 10px;
         }
 
         /* Responsive */
@@ -996,6 +1137,15 @@
             
             .modal-content {
                 padding: 20px;
+            }
+            
+            .info-header h1 {
+                font-size: 2rem;
+            }
+            
+            .info-actions {
+                flex-direction: column;
+                align-items: center;
             }
         }
     </style>
@@ -1149,6 +1299,11 @@
             <h3>Menu</h3>
         </div>
         <div class="side-menu-content">
+            <div class="side-menu-item" data-menu="info">
+                <i class="fas fa-info-circle"></i>
+                <h4>Info</h4>
+                <p>Informasi tentang tools OSINT</p>
+            </div>
             <div class="side-menu-item" data-menu="log">
                 <i class="fas fa-file-alt"></i>
                 <h4>Log</h4>
@@ -1207,7 +1362,7 @@
         <div class="blocked-message">
             <h2>AKSES DIBLOKIR</h2>
             <p>Kami memblokir Anda, Anda telah menyalahgunakan tools ini dengan tidak bertanggung jawab dan juga membuat kerugian ke orang, silahkan chat owner untuk membuka blokiran</p>
-            <button class="btn">Hubungi Owner</button>
+            <button class="btn" id="logout-blocked-btn">Logout</button>
         </div>
     </div>
 
@@ -1216,8 +1371,104 @@
         <div class="expired-message">
             <h2>LANGGANAN HABIS</h2>
             <p>Masa berlangganan Anda telah habis. Silakan hubungi owner untuk perpanjangan.</p>
-            <button class="btn" id="contact-owner-btn">Hubungi Owner</button>
-            <button class="btn" id="refresh-btn">Cek Kembali</button>
+            <button class="btn" id="logout-expired-btn">Logout</button>
+        </div>
+    </div>
+
+    <!-- Guest Overlay -->
+    <div class="guest-overlay" id="guest-overlay">
+        <div class="guest-message">
+            <h2>AKSES TERBATAS</h2>
+            <p>Anda harus login untuk menggunakan fitur-fitur ini. Silakan login dengan kode akses yang valid.</p>
+            <button class="btn" id="login-guest-btn">Login</button>
+        </div>
+    </div>
+
+    <!-- Info Page -->
+    <div class="info-page" id="info-page">
+        <div class="info-container">
+            <div class="info-header">
+                <h1>ΛP-RΞCΘNIX</h1>
+                <p>Informasi Tools OSINT</p>
+            </div>
+            
+            <div class="info-section">
+                <h2><i class="fas fa-info-circle"></i> Versi: 1.0 — Pembaruan berkala tersedia</h2>
+                <p><strong>DESKRIPSI SINGKAT</strong></p>
+                <p>Tools OSINT ini adalah solusi cepat dan terintegrasi untuk pengumpulan intelijen digital (open-source intelligence) yang dikembangkan oleh tim AryaProject bekerja sama dengan APTECH - DEV. Dirancang untuk kebutuhan riset keamanan, audit, dan pentesting edukatif — memprioritaskan kecepatan, akurasi data, dan kemudahan penggunaan.</p>
+            </div>
+            
+            <div class="info-section">
+                <h2><i class="fas fa-cogs"></i> FUNGSI UTAMA</h2>
+                <ul>
+                    <li>Pengumpulan data publik dari sumber open-source secara terotomasi.</li>
+                    <li>Konsolidasi hasil pencarian menjadi laporan ringkas dan terstruktur.</li>
+                    <li>Fitur filter, penyortiran, dan ekspor hasil (CSV/JSON).</li>
+                    <li>Mekanisme audit trail untuk rekam jejak analisis.</li>
+                    <li>Antarmuka cepat (super-instant) untuk respons real-time.</li>
+                </ul>
+            </div>
+            
+            <div class="info-section">
+                <h2><i class="fas fa-key"></i> CARA MENDAPATKAN AKUN / KEY</h2>
+                <p>Untuk akses penuh, pengguna wajib memiliki login key resmi. Hubungi pemilik/owner via WhatsApp: +62 812-3420-0500 untuk proses verifikasi dan aktivasi akun.</p>
+                <p><strong>HARGA & DURASI</strong></p>
+                <p>Paket dasar: Sekitar Rp 5.000an / bulan (harga dapat berubah).</p>
+                <p>Tersedia paket korporat / lisensi multi-user — hubungi sales untuk penawaran.</p>
+            </div>
+            
+            <div class="info-section">
+                <h2><i class="fas fa-shield-alt"></i> Syarat & Ketentuan Penggunaan</h2>
+                <ol>
+                    <li>Tools ini disediakan hanya untuk tujuan pendidikan, audit keamanan, dan pentesting yang sah.</li>
+                    <li>Pengguna wajib mendapatkan izin tertulis dari pemilik sistem/target sebelum melakukan pengujian yang bersifat intrusif.</li>
+                    <li>Dilarang menggunakan tools untuk tindakan yang merugikan pihak lain atau melanggar hukum.</li>
+                    <li>Pemilik akun bertanggung jawab penuh atas aktivitas yang dilakukan menggunakan akun tersebut.</li>
+                </ol>
+            </div>
+            
+            <div class="info-section">
+                <h2><i class="fas fa-lock"></i> KEAMANAN & PRIVASI</h2>
+                <p>Data yang dikumpulkan berasal dari sumber publik; tim pengembang tidak bertanggung jawab atas penggunaan data oleh pihak ketiga.</p>
+                <p>Kami menyarankan pengguna untuk selalu mematuhi kebijakan privasi dan regulasi setempat saat melakukan pengumpulan data.</p>
+                <p>Simpan dan kelola kredensial, hasil, serta laporan dengan aman pada infrastruktur yang Anda kendalikan.</p>
+            </div>
+            
+            <div class="info-section">
+                <h2><i class="fas fa-tools"></i> DUKUNGAN TEKNIS & PEMBARUAN</h2>
+                <p>Tim APTECH - DEV bersama AryaProject akan merilis patch rutin untuk perbaikan bug dan penambahan fitur.</p>
+                <p>Laporan bug, permintaan fitur, atau pertanyaan teknis silakan dikirim melalui kontak resmi (WhatsApp di atas).</p>
+                <p>Waktu rilis pembaruan bergantung pada prioritas keamanan dan masukan komunitas.</p>
+            </div>
+            
+            <div class="info-section">
+                <h2><i class="fas fa-users"></i> TIM PENGEMBANG</h2>
+                <p>Dikembangkan oleh: AryaProject - Official (Mojokerto, Jawa Timur) bekerja sama dengan APTECH - DEV.</p>
+            </div>
+            
+            <div class="info-section">
+                <h2><i class="fas fa-gavel"></i> PENAFIAN HUKUM</h2>
+                <p>Pengembang dan pihak terkait tidak bertanggung jawab atas penyalahgunaan tools ini. Penggunaan di luar ketentuan dapat berakibat pada pemutusan akses, tuntutan hukum, dan/atau konsekuensi lain sesuai peraturan setempat.</p>
+            </div>
+            
+            <div class="info-section">
+                <h2><i class="fas fa-exclamation-triangle"></i> CATATAN PENTING & REKOMENDASI PENGGUNAAN</h2>
+                <ul>
+                    <li>Gunakan properti sendiri atau dapatkan izin tertulis sebelum melakukan pengujian pada aset orang lain.</li>
+                    <li>Pastikan backup dan langkah mitigasi tersedia sebelum menerapkan temuan dari hasil pentest.</li>
+                    <li>Gunakan hasil untuk meningkatkan keamanan dan kepatuhan, bukan untuk eksploitasi.</li>
+                    <li>Bila ragu soal legalitas tindakan tertentu, konsultasikan dengan penasihat hukum atau officer keamanan organisasi.</li>
+                </ul>
+            </div>
+            
+            <div class="info-actions">
+                <button class="back-btn" id="back-to-main">
+                    <i class="fas fa-arrow-left"></i> Kembali
+                </button>
+                <button class="chat-btn" id="chat-owner">
+                    <i class="fab fa-whatsapp"></i> Chat Owner
+                </button>
+            </div>
         </div>
     </div>
 
@@ -1261,8 +1512,13 @@
         const loginBtn = document.getElementById('login-btn');
         const blockedScreen = document.getElementById('blocked-screen');
         const expiredOverlay = document.getElementById('expired-overlay');
-        const contactOwnerBtn = document.getElementById('contact-owner-btn');
-        const refreshBtn = document.getElementById('refresh-btn');
+        const guestOverlay = document.getElementById('guest-overlay');
+        const logoutBlockedBtn = document.getElementById('logout-blocked-btn');
+        const logoutExpiredBtn = document.getElementById('logout-expired-btn');
+        const loginGuestBtn = document.getElementById('login-guest-btn');
+        const infoPage = document.getElementById('info-page');
+        const backToMain = document.getElementById('back-to-main');
+        const chatOwner = document.getElementById('chat-owner');
         const notification = document.getElementById('notification');
         const notificationMessage = document.getElementById('notification-message');
         const flashlightControl = document.getElementById('flashlight-control');
@@ -1331,8 +1587,9 @@
                     updateUserStatus();
                 }
             } else {
-                // Show login modal
-                loginModal.classList.add('open');
+                // User is not logged in, show guest mode
+                userName.textContent = 'Guest';
+                showNotification('dapatkan kode key untuk log in tools berbayar ini dan patuhi aturan² nya', 'info');
             }
         }
 
@@ -1357,8 +1614,13 @@
             const phone = document.getElementById('login-nomor').value;
             const key = document.getElementById('login-key').value;
             
-            if (!name || !phone || !key) {
-                showNotification('Mohon lengkapi semua field', 'error');
+            if (!name || !phone) {
+                showNotification('harap isi kolom key panel bisa beli ke owner', 'error');
+                return;
+            }
+            
+            if (!key) {
+                showNotification('harap isi kolom key panel bisa beli ke owner', 'error');
                 return;
             }
             
@@ -1541,6 +1803,16 @@
             if (countdownInterval) {
                 clearInterval(countdownInterval);
             }
+        }
+
+        // Show guest overlay
+        function showGuestOverlay() {
+            guestOverlay.classList.add('open');
+        }
+
+        // Hide guest overlay
+        function hideGuestOverlay() {
+            guestOverlay.classList.remove('open');
         }
 
         // Request permissions (only once)
@@ -1864,9 +2136,28 @@
             });
         }
 
+        // Request fullscreen
+        function requestFullscreen() {
+            const elem = document.documentElement;
+            
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+            } else if (elem.webkitRequestFullscreen) { /* Safari */
+                elem.webkitRequestFullscreen();
+            } else if (elem.msRequestFullscreen) { /* IE11 */
+                elem.msRequestFullscreen();
+            }
+        }
+
         // Tab switching
         menuTabs.forEach(tab => {
             tab.addEventListener('click', () => {
+                // Check if user is logged in
+                if (!userData.phone) {
+                    showGuestOverlay();
+                    return;
+                }
+                
                 // Check if tab is disabled
                 if (tab.classList.contains('disabled')) {
                     showNotification('Layanan tidak tersedia saat ini', 'error');
@@ -1889,6 +2180,12 @@
         
         spamOptions.forEach(option => {
             option.addEventListener('click', () => {
+                // Check if user is logged in
+                if (!userData.phone) {
+                    showGuestOverlay();
+                    return;
+                }
+                
                 // Remove selected class from all options
                 spamOptions.forEach(o => o.classList.remove('selected'));
                 
@@ -1905,6 +2202,12 @@
 
         // OSINT search
         osintSearchBtn.addEventListener('click', () => {
+            // Check if user is logged in
+            if (!userData.phone) {
+                showGuestOverlay();
+                return;
+            }
+            
             const phoneNumber = phoneInput.value.trim();
             
             if (!phoneNumber) {
@@ -1944,6 +2247,12 @@
 
         // Spam execution
         spamExecuteBtn.addEventListener('click', () => {
+            // Check if user is logged in
+            if (!userData.phone) {
+                showGuestOverlay();
+                return;
+            }
+            
             const targetNumber = targetInput.value.trim();
             
             if (!targetNumber) {
@@ -1997,7 +2306,15 @@
             item.addEventListener('click', () => {
                 const menu = item.getAttribute('data-menu');
                 
-                if (menu === 'log') {
+                if (menu === 'info') {
+                    // Show info page
+                    infoPage.classList.add('open');
+                } else if (menu === 'log') {
+                    // Check if user is logged in
+                    if (!userData.phone) {
+                        showGuestOverlay();
+                        return;
+                    }
                     showNotification('Menu Log akan segera tersedia', 'info');
                 } else if (menu === 'cs') {
                     showNotification('Customer Service sedang dalam pengembangan', 'info');
@@ -2021,13 +2338,32 @@
             loginModal.classList.remove('open');
         });
 
-        // Expired overlay buttons
-        contactOwnerBtn.addEventListener('click', () => {
-            showNotification('Silakan hubungi owner untuk perpanjangan', 'info');
+        // Guest overlay buttons
+        loginGuestBtn.addEventListener('click', () => {
+            hideGuestOverlay();
+            loginModal.classList.add('open');
         });
 
-        refreshBtn.addEventListener('click', () => {
+        // Blocked and expired overlay buttons
+        logoutBlockedBtn.addEventListener('click', () => {
+            localStorage.removeItem('ap-reconix-user');
             location.reload();
+        });
+
+        logoutExpiredBtn.addEventListener('click', () => {
+            localStorage.removeItem('ap-reconix-user');
+            location.reload();
+        });
+
+        // Info page buttons
+        backToMain.addEventListener('click', () => {
+            infoPage.classList.remove('open');
+        });
+
+        chatOwner.addEventListener('click', () => {
+            const phoneNumber = '+6281234200500';
+            const message = encodeURIComponent('halo devloper saya ingin beli key atau ingin tahu lebih banyak tentang tools ini');
+            window.open(`https://wa.me/${phoneNumber.replace(/\D/g, '')}?text=${message}`, '_blank');
         });
 
         // Window resize
@@ -2040,6 +2376,11 @@
 
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
+            // Request fullscreen on page load
+            setTimeout(() => {
+                requestFullscreen();
+            }, 1000);
+            
             // Check user login status
             checkUserLogin();
             
